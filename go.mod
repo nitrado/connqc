@@ -7,7 +7,7 @@ require (
 	github.com/hamba/cmd/v2 v2.2.0
 	github.com/hamba/logger/v2 v2.3.0
 	github.com/joho/godotenv v1.4.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.3
 	github.com/urfave/cli/v2 v2.3.0
 )
 
@@ -42,5 +42,5 @@ require (
 	go.opentelemetry.io/otel/trace v1.3.0 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
