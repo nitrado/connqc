@@ -10,16 +10,18 @@ on:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    env:
+      GO_VERSION: "1.20"
+
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v3
 
       - name: Install Go
-        uses: actions/setup-go@v2
+        if: success()
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.20
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Cache Go modules
         uses: actions/cache@v2
@@ -39,18 +41,9 @@ jobs:
       - name: Verify Go modules
         run: go mod tidy && git status && git --no-pager diff && git diff-index --quiet HEAD --
 
-      # Install GoReleaser and print its version before running.
-      - name: Install GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          install-only: true
-
-      - name: Show GoReleaser version
-        run: goreleaser -v
-
       # Run GoReleaser.
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v4
         with:
           distribution: goreleaser
           version: latest
