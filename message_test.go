@@ -1,10 +1,10 @@
-package signal_test
+package connqc_test
 
 import (
 	"bytes"
 	"testing"
 
-	"dev.marbis.net/marbis/signal"
+	"github.com/nitrado/connqc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -12,13 +12,13 @@ import (
 func TestEncoder_Encode(t *testing.T) {
 	tests := []struct {
 		name      string
-		msg       signal.Message
+		msg       connqc.Message
 		wantBytes []byte
 		wantErr   require.ErrorAssertionFunc
 	}{
 		{
 			name:      "handles encoding probe",
-			msg:       signal.Probe{ID: 2, Data: "Hello 2"},
+			msg:       connqc.Probe{ID: 2, Data: "Hello 2"},
 			wantBytes: []byte{'P', 'R', 'B', 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x2, 0x0, 0x7, 'H', 'e', 'l', 'l', 'o', ' ', '2'},
 			wantErr:   require.NoError,
 		},
@@ -28,7 +28,7 @@ func TestEncoder_Encode(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			buf := bytes.Buffer{}
-			enc := signal.NewEncoder(&buf)
+			enc := connqc.NewEncoder(&buf)
 
 			err := enc.Encode(test.msg)
 
@@ -42,13 +42,13 @@ func TestDecoder_Decode(t *testing.T) {
 	tests := []struct {
 		name    string
 		data    []byte
-		wantMsg signal.Message
+		wantMsg connqc.Message
 		wantErr require.ErrorAssertionFunc
 	}{
 		{
 			name:    "handles encoding probe",
 			data:    []byte{'P', 'R', 'B', 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x2, 0x0, 0x7, 'H', 'e', 'l', 'l', 'o', ' ', '2'},
-			wantMsg: signal.Probe{ID: 2, Data: "Hello 2"},
+			wantMsg: connqc.Probe{ID: 2, Data: "Hello 2"},
 			wantErr: require.NoError,
 		},
 	}
@@ -56,7 +56,7 @@ func TestDecoder_Decode(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			dec := signal.NewDecoder(bytes.NewReader(test.data))
+			dec := connqc.NewDecoder(bytes.NewReader(test.data))
 
 			got, err := dec.Decode()
 

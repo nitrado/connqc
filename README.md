@@ -21,6 +21,14 @@ The client logs the probing duration and warns if some messages get lost.
 
 ## Usage
 
+<p align="left">
+        <img width="500px" src="./docs/assets/server.jpg" />
+</p>
+
+<p align="right">
+        <img width="500px" src="./docs/assets/client.gif" />
+</p>
+
 ### Server
 
 Start the server. The default address is `:8123`:
