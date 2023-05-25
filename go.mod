@@ -1,6 +1,6 @@
 module dev.marbis.net/marbis/signal
 
-go 1.17
+go 1.20
 
 require (
 	github.com/ettle/strcase v0.1.1
