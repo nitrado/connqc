@@ -3,10 +3,10 @@ package main
 import (
 	"errors"
 
-	"dev.marbis.net/marbis/signal"
-	"dev.marbis.net/marbis/signal/tcp"
 	"github.com/hamba/cmd/v2"
 	lctx "github.com/hamba/logger/v2/ctx"
+	"github.com/nitrado/connqc"
+	"github.com/nitrado/connqc/tcp"
 	"github.com/urfave/cli/v2"
 )
 
@@ -22,7 +22,7 @@ func runServer(c *cli.Context) error {
 	readTimeout := c.Duration(flagReadTimeout)
 	writeTimeout := c.Duration(flagWriteTimeout)
 
-	sigSrv := signal.NewServer(bufferSize, readTimeout, writeTimeout, log)
+	sigSrv := connqc.NewServer(bufferSize, readTimeout, writeTimeout, log)
 
 	srv, err := tcp.NewServer(sigSrv)
 	if err != nil {

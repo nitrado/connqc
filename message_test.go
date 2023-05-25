@@ -1,10 +1,9 @@
-package signal_test
+package connqc_test
 
 import (
 	"bytes"
 	"testing"
 
-	"dev.marbis.net/marbis/signal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

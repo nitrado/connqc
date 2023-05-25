@@ -1,8 +1,8 @@
 package main
 
 import (
-	"dev.marbis.net/marbis/signal"
 	"github.com/hamba/cmd/v2"
+	"github.com/nitrado/connqc"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,7 +19,7 @@ func runClient(c *cli.Context) error {
 	readTimeout := c.Duration(flagReadTimeout)
 	writeTimeout := c.Duration(flagWriteTimeout)
 
-	sig := signal.NewClient(backoff, sendInterval, readTimeout, writeTimeout, log)
+	sig := connqc.NewClient(backoff, sendInterval, readTimeout, writeTimeout, log)
 
 	addr := c.String(flagAddr)
 	go sig.Run(ctx, addr)
