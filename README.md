@@ -1,6 +1,21 @@
-# Signal
+# Connection Quality Control
 
-Signal is a tool to test the network transport between multiple regions.
+<p align="center">
+    <a href="#license">
+        <img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" />
+    </a>
+    <a href="https://goreportcard.com/report/github.com/nitrado/connqc">
+        <img src="https://goreportcard.com/badge/github.com/nitrado/connqc" />
+    </a>
+    <a href="https://github.com/nitrado/connqc/releases/latest">
+        <img src="https://img.shields.io/github/release/nitrado/connqc.svg?style=flat" />
+    </a>
+    <a href="https://pkg.go.dev/github.com/nitrado/connqc">
+        <img src="https://pkg.go.dev/badge/github.com/nitrado/connqc?utm_source=godoc" />
+    </a>
+</p>
+
+`signal` is a tool to control the quality of the network transport between multiple regions.
 It consists of a server that listens for TCP probing messages, and a client that sends said messages.
 The client logs the probing duration and warns if some messages get lost.
 
@@ -82,3 +97,13 @@ OPTIONS:
    --log.ctx value        A list of context field appended to every log. Format: key=value. [$LOG_CTX]
    --help, -h             show help (default: false)
 ```
+
+## License
+
+Copyright 2023 marbis GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
