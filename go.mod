@@ -1,4 +1,4 @@
-module dev.marbis.net/marbis/signal
+module github.com/nitrado/connqc
 
 go 1.20
 
