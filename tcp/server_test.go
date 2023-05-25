@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"dev.marbis.net/marbis/signal/tcp"
+	"github.com/nitrado/connqc/tcp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
