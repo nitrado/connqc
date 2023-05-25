@@ -1,0 +1,42 @@
+project_name: signal
+dist: dist
+
+gomod:
+  proxy: true
+
+builds:
+  - main: ./cmd/signal
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - format: binary
+
+changelog:
+  skip: true
+
+checksum:
+  name_template: '{{ .ProjectName }}_checksums.txt'
+
+release:
+  disable: true
+
+dockers:
+  - dockerfile: Dockerfile
+    goos: linux
+    goarch: amd64
+    image_templates:
+      - "signal:{{ .Version }}"
+
+snapshot:
+  name_template: "dev-{{ slice .FullCommit 0 8}}"
