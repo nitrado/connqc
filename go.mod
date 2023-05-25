@@ -6,7 +6,7 @@ require (
 	github.com/ettle/strcase v0.1.1
 	github.com/hamba/cmd/v2 v2.7.2
 	github.com/hamba/logger/v2 v2.4.0
-	github.com/joho/godotenv v1.4.0
+	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.8.3
 	github.com/urfave/cli/v2 v2.25.1
 )
