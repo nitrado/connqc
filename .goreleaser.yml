@@ -22,21 +22,21 @@ builds:
 archives:
   - format: binary
 
-changelog:
-  skip: true
-
 checksum:
   name_template: '{{ .ProjectName }}_checksums.txt'
 
 release:
-  disable: true
+  github:
+    owner: nitrado
+    name: connqc
 
 dockers:
   - dockerfile: Dockerfile
     goos: linux
     goarch: amd64
     image_templates:
-      - "signal:{{ .Version }}"
+      - "ghcr.io/nitrado/connqc:{{ .Version }}"
+      - "ghcr.io/nitrado/connqc:latest"
 
 snapshot:
   name_template: "dev-{{ slice .FullCommit 0 8}}"
