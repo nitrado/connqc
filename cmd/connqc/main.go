@@ -31,11 +31,11 @@ var version = "¯\\_(ツ)_/¯"
 var commands = []*cli.Command{
 	{
 		Name:  "client",
-		Usage: "Run the signal client",
+		Usage: "Run the connqc client",
 		Flags: cmd.Flags{
 			&cli.StringFlag{
 				Name:     flagAddr,
-				Usage:    "The address of a signal server",
+				Usage:    "The address of a connqc server",
 				Required: true,
 				EnvVars:  []string{strcase.ToSNAKE(flagAddr)},
 			},
@@ -68,11 +68,11 @@ var commands = []*cli.Command{
 	},
 	{
 		Name:  "server",
-		Usage: "Run the signal server",
+		Usage: "Run the connqc server",
 		Flags: cmd.Flags{
 			&cli.StringFlag{
 				Name:    flagAddr,
-				Usage:   "The address to listen on for signals",
+				Usage:   "The address to listen on for probe messages",
 				Value:   ":8123",
 				EnvVars: []string{strcase.ToSNAKE(flagAddr)},
 			},
@@ -115,7 +115,8 @@ func realMain() (code int) {
 	}()
 
 	app := cli.NewApp()
-	app.Name = "signal"
+	app.Name = "connqc"
+	app.Description = "Connection quality control checker"
 	app.Version = version
 	app.Commands = commands
 

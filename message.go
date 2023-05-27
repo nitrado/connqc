@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-// Message represents a signal message.
+// Message represents a connqc message.
 type Message interface {
 	unexported()
 }

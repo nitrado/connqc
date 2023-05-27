@@ -1,11 +1,11 @@
-project_name: signal
+project_name: connqc
 dist: dist
 
 gomod:
   proxy: true
 
 builds:
-  - main: ./cmd/signal
+  - main: ./cmd/connqc
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
     goos:

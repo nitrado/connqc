@@ -15,7 +15,7 @@
     </a>
 </p>
 
-`signal` is a tool to control the quality of the network transport between multiple regions.
+`connqc` is a tool to control the quality of the network transport between multiple regions.
 It consists of a server that listens for TCP probing messages, and a client that sends said messages.
 The client logs the probing duration and warns if some messages get lost.
 
@@ -34,13 +34,13 @@ The client logs the probing duration and warns if some messages get lost.
 Start the server. The default address is `:8123`:
 
 ```shell
-$ signal server 
+$ connqc server 
 ```
 
 or specify a port:
 
 ```shell
-$ signal server --addr=":1234"
+$ connqc server --addr=":1234"
 ```
 
 #### More Options
@@ -49,7 +49,7 @@ The `server` command supports the following additional arguments.
 
 ```shell
 OPTIONS:
-   --addr value           The address to listen on for signals (default: ":8123") [$ADDR]
+   --addr value           The address to listen on for probe messages (default: ":8123") [$ADDR]
    --buffer-size value    The size of the read buffer used by the server (default: 512) [$BUFFER_SIZE]
    --read-timeout value   The duration after which the server should timeout when reading from a connection (default: 2s) [$READ_TIMEOUT]
    --write-timeout value  The duration after which the server should timeout when writing to a connection (default: 5s) [$WRITE_TIMEOUT]
@@ -71,22 +71,22 @@ $ firewall-cmd --remove-port=8123/tcp
 
 ### Client
 
-Start the client with the signal server's address:
+Start the client with the connqc server's address:
 
 ```shell
-$ signal client --addr="127.0.0.1:8123"
+$ connqc client --addr="127.0.0.1:8123"
 ```
 
 To enable more human-readable logs, set the log format:
 
 ```shell
-$ signal client --addr="127.0.0.1:8123" --log.format="console"
+$ connqc client --addr="127.0.0.1:8123" --log.format="console"
 ```
 
 To increase the amount of sent requests, reduce the interval:
 
 ```shell
-$ signal client --addr="127.0.0.1:8123" --interval="200ms"
+$ connqc client --addr="127.0.0.1:8123" --interval="200ms"
 ```
 
 #### More Options
@@ -95,7 +95,7 @@ The `client` command supports the following additional arguments.
 
 ```shell
 OPTIONS:
-   --addr value           The address of a signal server [$ADDR]
+   --addr value           The address of a connqc server [$ADDR]
    --backoff value        Duration to wait for before retrying to connect to the server (default: 1s) [$BACKOFF]
    --interval value       Interval at which to send probe messages to the server (default: 1s) [$INTERVAL]
    --read-timeout value   The duration after which the client should timeout when reading from a connection (default: 2s) [$READ_TIMEOUT]
