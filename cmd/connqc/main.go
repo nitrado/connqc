@@ -116,7 +116,7 @@ func realMain() (code int) {
 
 	app := cli.NewApp()
 	app.Name = "connqc"
-	app.Description = "Connection quality control checker"
+	app.Description = "Connection quality checker"
 	app.Version = version
 	app.Commands = commands
 

@@ -1,4 +1,4 @@
-# Connection Quality Control
+# Connection Quality Checker
 
 <p align="center">
     <a href="#license">
