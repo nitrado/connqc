@@ -48,15 +48,16 @@ func (s *Server) Listen(addr string) error {
 
 	for {
 		conn, err := s.listener.Accept()
-
-		var netErr net.Error
-		switch {
-		case err != nil && errors.Is(err, net.ErrClosed):
-			return ErrServerClosed
-		case err != nil && errors.As(err, &netErr) && netErr.Timeout():
-			return err
-		case err != nil:
-			return fmt.Errorf("failed to accept connection: %w", err)
+		if err != nil {
+			var netErr net.Error
+			switch {
+			case errors.Is(err, net.ErrClosed):
+				return ErrServerClosed
+			case errors.As(err, &netErr) && netErr.Timeout():
+				return err
+			default:
+				return fmt.Errorf("failed to accept connection: %w", err)
+			}
 		}
 
 		go func() {
