@@ -70,8 +70,6 @@ var _ net.PacketConn = &packetConn{}
 
 // packetConn makes a TCP connection act like an unbound connection
 // to support the same interface that a UDP connection offers.
-//
-// The other way round of making a UDP connection act like a bound connection just like TCP is more complex.
 type packetConn struct {
 	conn net.Conn
 }
