@@ -8,18 +8,18 @@ import (
 )
 
 // ErrNegativeCount is returned when a negative number of bytes is requested.
-var ErrNegativeCount = errors.New("bufio: negative count")
+var ErrNegativeCount = errors.New("buffr: negative count")
 
 // BufferedReader implements buffering for an io.Reader object.
-// BufferedReader will not read from the underlying reader unless its
-// buffer is empty, reducing the risk of cross packet reading.
+// BufferedReader does not read from the underlying reader unless its
+// buffer is empty, reducing the risk of cross-packet reading.
 type BufferedReader struct {
 	rd   io.Reader
 	buf  []byte
 	r, w int
 }
 
-// NewBufferedReader returns a new BufferedReader whose buffer is size.
+// NewBufferedReader returns a new BufferedReader with a buffer of the length specified by size.
 func NewBufferedReader(rd io.Reader, size int) *BufferedReader {
 	r := &BufferedReader{}
 	r.reset(make([]byte, size), rd)
@@ -28,10 +28,9 @@ func NewBufferedReader(rd io.Reader, size int) *BufferedReader {
 
 // Reset discards any buffered data, resets all state, and switches
 // the buffered reader to read from rd.
-// Calling Reset on the zero value of Reader will panic.
 func (r *BufferedReader) Reset(rd io.Reader) {
 	if r.buf == nil {
-		panic(errors.New("bufio: uninitialized PacketBuffer"))
+		return
 	}
 	r.reset(r.buf, rd)
 }
