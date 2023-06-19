@@ -66,16 +66,18 @@ func (g *gracefulRead) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	var netErr net.Error
 	for {
 		n, addr, err = g.conn.ReadFrom(p)
-
-		switch {
-		case err != nil && errors.As(err, &netErr) && netErr.Timeout() && !g.active:
-			_ = g.conn.SetReadDeadline(time.Now().Add(g.readDeadline))
-			continue
-		case err != nil && errors.As(err, &netErr) && netErr.Timeout() && g.active:
-			g.active = false
-		case err == nil:
-			g.active = true
+		if err != nil {
+			switch {
+			case errors.As(err, &netErr) && netErr.Timeout() && !g.active:
+				_ = g.conn.SetReadDeadline(time.Now().Add(g.readDeadline))
+				continue
+			case errors.As(err, &netErr) && netErr.Timeout() && g.active:
+				g.active = false
+			}
+			return n, addr, err
 		}
+
+		g.active = true
 
 		return n, addr, err
 	}

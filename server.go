@@ -45,18 +45,20 @@ func (s *Server) Serve(conn net.PacketConn) { //nolint:cyclop // Simplify readab
 			log = log.With(lctx.Str("protocol", addr.Network()), lctx.Str("addr", addr.String()))
 		}
 
-		var netErr net.Error
-		switch {
-		case err != nil && errors.Is(err, io.EOF):
-			return
-		case err != nil && errors.Is(err, net.ErrClosed):
-			return
-		case err != nil && errors.As(err, &netErr) && netErr.Timeout():
-			log.Error("Reading from connection timed out", lctx.Err(err))
-			continue
-		case err != nil:
-			s.log.Error("Could not read request", lctx.Err(err))
-			continue
+		if err != nil {
+			var netErr net.Error
+			switch {
+			case errors.Is(err, io.EOF):
+				return
+			case errors.Is(err, net.ErrClosed):
+				return
+			case errors.As(err, &netErr) && netErr.Timeout():
+				log.Error("Reading from connection timed out", lctx.Err(err))
+				continue
+			default:
+				s.log.Error("Could not read request", lctx.Err(err))
+				continue
+			}
 		}
 		log.Debug("Message received", lctx.Str("data", string(buf[:n])))
 
