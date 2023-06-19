@@ -1,2 +1,2 @@
-// Package udp provides a UDP connection and server.
+// Package udp provides a UDP server implementation.
 package udp

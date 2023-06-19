@@ -5,15 +5,8 @@ import (
 	"net"
 )
 
-var _ net.Conn = &Conn{}
-
-// Conn contains the UDP connection.
-type Conn struct {
-	*net.UDPConn
-}
-
-// NewConn returns a new UDP connection.
-func NewConn(addr string) (*Conn, error) {
+// Connect returns a new UDP connection.
+func Connect(addr string) (net.Conn, error) {
 	raddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve address: %w", err)
@@ -24,7 +17,5 @@ func NewConn(addr string) (*Conn, error) {
 		return nil, fmt.Errorf("failed to dial: %w", err)
 	}
 
-	return &Conn{
-		conn,
-	}, nil
+	return conn, err
 }

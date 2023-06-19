@@ -5,21 +5,12 @@ import (
 	"net"
 )
 
-var _ net.Conn = &Conn{}
-
-// Conn contains the TCP connection.
-type Conn struct {
-	net.Conn
-}
-
-// NewConn returns a new TCP connection.
-func NewConn(addr string) (*Conn, error) {
+// Connect returns a new TCP connection.
+func Connect(addr string) (net.Conn, error) {
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to dial: %w", err)
 	}
 
-	return &Conn{
-		conn,
-	}, nil
+	return conn, nil
 }

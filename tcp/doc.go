@@ -1,2 +1,2 @@
-// Package tcp provides a TCP connection and server.
+// Package tcp provides a TCP server implementation.
 package tcp

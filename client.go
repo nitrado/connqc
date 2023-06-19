@@ -47,9 +47,9 @@ func (c *Client) Run(ctx context.Context, protocol, addr string) {
 
 		switch protocol {
 		case "tcp":
-			conn, err = tcp.NewConn(addr)
+			conn, err = tcp.Connect(addr)
 		case "udp":
-			conn, err = udp.NewConn(addr)
+			conn, err = udp.Connect(addr)
 		default:
 			log.Error("Unexpected protocol")
 			return
