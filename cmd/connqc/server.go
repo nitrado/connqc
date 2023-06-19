@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func runServer(c *cli.Context) error {
+func runServer(c *cli.Context) error { //nolint:funlen // Keep it simple and readable.
 	ctx := c.Context
 
 	log, err := cmd.NewLogger(c)
@@ -40,7 +40,6 @@ func runServer(c *cli.Context) error {
 	addr := c.String(flagAddr)
 
 	grp := sync.WaitGroup{}
-	grp.Add(2)
 
 	log.Info("Starting server",
 		lctx.Str("addr", addr),
@@ -48,6 +47,8 @@ func runServer(c *cli.Context) error {
 		lctx.Duration("read_timeout", readTimeout),
 		lctx.Duration("write_timeout", writeTimeout),
 	)
+
+	grp.Add(1)
 	go func() {
 		defer grp.Done()
 
@@ -57,6 +58,8 @@ func runServer(c *cli.Context) error {
 		}
 		log.Info("TCP server stopped")
 	}()
+
+	grp.Add(1)
 	go func() {
 		defer grp.Done()
 
