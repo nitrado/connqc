@@ -34,12 +34,12 @@ func NewServer(h Handler) (*Server, error) {
 func (s *Server) Listen(ctx context.Context, addr string) error {
 	laddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
-		return fmt.Errorf("failed to resolve UDP address: %w", err)
+		return fmt.Errorf("resolving address: %w", err)
 	}
 
 	ln, err := net.ListenUDP(laddr.Network(), laddr)
 	if err != nil {
-		return fmt.Errorf("failed to listen: %w", err)
+		return fmt.Errorf("listening: %w", err)
 	}
 	defer func() { _ = ln.Close() }()
 

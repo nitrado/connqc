@@ -35,7 +35,7 @@ func (s *Server) Listen(ctx context.Context, addr string) error {
 	lc := &net.ListenConfig{}
 	ln, err := lc.Listen(ctx, "tcp", addr)
 	if err != nil {
-		return fmt.Errorf("failed to listen: %w", err)
+		return fmt.Errorf("listening: %w", err)
 	}
 	defer func() { _ = ln.Close() }()
 
@@ -55,7 +55,7 @@ func (s *Server) Listen(ctx context.Context, addr string) error {
 		case err != nil && errors.As(err, &netErr) && netErr.Timeout():
 			return err
 		case err != nil:
-			return fmt.Errorf("failed to accept connection: %w", err)
+			return fmt.Errorf("accepting connection: %w", err)
 		}
 
 		go func() {

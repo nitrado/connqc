@@ -9,7 +9,7 @@ import (
 func Connect(addr string) (net.Conn, error) {
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
-		return nil, fmt.Errorf("failed to dial: %w", err)
+		return nil, fmt.Errorf("dialing: %w", err)
 	}
 
 	return conn, nil
