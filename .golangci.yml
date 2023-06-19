@@ -35,6 +35,7 @@ linters:
     - varnamelen
     - wrapcheck
     - wsl
+    - depguard
 
 issues:
   exclude-use-default: false
