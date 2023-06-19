@@ -7,7 +7,7 @@ import (
 
 var _ net.Conn = &Conn{}
 
-// Conn contains the TCP connection.
+// Conn contains the UDP connection.
 type Conn struct {
 	*net.UDPConn
 }

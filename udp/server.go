@@ -1,4 +1,3 @@
-// Package udp implements a UDP server.
 package udp
 
 import (

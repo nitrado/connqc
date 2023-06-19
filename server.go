@@ -33,7 +33,7 @@ func NewServer(bufSize int, readTimeout, writeTimeout time.Duration, log *logger
 //
 // The handler provides an identical response to every message it receives.
 // The caller who initiated the connection is responsible for ensuring its closure.
-func (s *Server) Serve(conn net.PacketConn) { //nolint:cyclop // Prefer readability over complexity.
+func (s *Server) Serve(conn net.PacketConn) { //nolint:cyclop // Simplify readability.
 	buf := make([]byte, s.bufSize)
 	for {
 		log := s.log

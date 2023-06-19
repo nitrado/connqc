@@ -79,7 +79,7 @@ type expectation struct {
 	probe     Probe
 }
 
-func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint:lll,funlen // Prefer readability over complexity.
+func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint:funlen // Simplify readability.
 	defer func() { _ = conn.Close() }()
 
 	readCh := make(chan readResponse)
