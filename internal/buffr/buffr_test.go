@@ -1,11 +1,11 @@
-package bufio_test
+package buffr_test
 
 import (
 	"bytes"
 	"io"
 	"testing"
 
-	"github.com/nitrado/connqc/internal/bufio"
+	"github.com/nitrado/connqc/internal/buffr"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -13,7 +13,7 @@ import (
 func TestPacketReader(t *testing.T) {
 	rd := bytes.NewReader([]byte("this is a test:"))
 
-	r := bufio.NewPacketReader(rd, 20)
+	r := buffr.NewBufferedReader(rd, 20)
 	r.Reset(rd)
 
 	var pb [5]byte
@@ -50,7 +50,7 @@ func TestPacketReader(t *testing.T) {
 func TestPacketReader_DiscardHandlesShortBuffer(t *testing.T) {
 	rd := bytes.NewReader([]byte("test"))
 
-	r := bufio.NewPacketReader(rd, 20)
+	r := buffr.NewBufferedReader(rd, 20)
 
 	var pb [5]byte
 	_, err := r.Peek(pb[:])
@@ -65,35 +65,10 @@ func TestPacketReader_DiscardHandlesShortBuffer(t *testing.T) {
 func TestPacketReader_ReadSliceHandlesShortBuffer(t *testing.T) {
 	rd := bytes.NewReader([]byte("test"))
 
-	r := bufio.NewPacketReader(rd, 20)
+	r := buffr.NewBufferedReader(rd, 20)
 
 	sb, err := r.ReadSlice(':')
 
 	require.ErrorIs(t, err, io.EOF)
 	assert.Nil(t, sb)
-}
-
-func TestPacketWriter(t *testing.T) {
-	wr := bytes.NewBuffer(nil)
-
-	w := bufio.NewPacketWriter(wr)
-
-	n, err := w.Write([]byte("test"))
-	require.NoError(t, err)
-	assert.Equal(t, 4, n)
-
-	err = w.Flush()
-	require.NoError(t, err)
-	assert.Equal(t, "test", wr.String())
-
-	wr2 := bytes.NewBuffer(nil)
-	w.Reset(wr2)
-
-	n, err = w.Write([]byte("test"))
-	require.NoError(t, err)
-	assert.Equal(t, 4, n)
-
-	err = w.Flush()
-	require.NoError(t, err)
-	assert.Equal(t, "test", wr2.String())
 }

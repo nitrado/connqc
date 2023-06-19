@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/nitrado/connqc/internal/bufio"
+	"github.com/nitrado/connqc/internal/buffr"
 )
 
 // Message represents a connqc message.
@@ -65,7 +65,7 @@ func NewDecoder(r io.Reader) Decoder {
 	return Decoder{
 		// The packet reader solves the issue of reading packets at once (required for UDP) while
 		// still being able to read byte by byte to verify the input.
-		r: bufio.NewPacketReader(r, 1500),
+		r: buffr.NewBufferedReader(r, 1500),
 	}
 }
 
