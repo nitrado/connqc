@@ -58,7 +58,7 @@ func (s *Server) Serve(conn net.PacketConn) { //nolint:cyclop // Simplify readab
 			s.log.Error("Could not read request", lctx.Err(err))
 			continue
 		}
-		log.Debug("Data received", lctx.Str("data", string(buf[:n])))
+		log.Debug("Message received", lctx.Str("data", string(buf[:n])))
 
 		_ = conn.SetWriteDeadline(time.Now().Add(s.writeTimeout))
 
@@ -74,6 +74,6 @@ func (s *Server) Serve(conn net.PacketConn) { //nolint:cyclop // Simplify readab
 			log.Error("Unexpected write length", lctx.Int("expected", n), lctx.Int("actual", wn))
 			continue
 		}
-		log.Debug("Data sent", lctx.Str("data", string(buf[:n])))
+		log.Debug("Message sent", lctx.Str("data", string(buf[:n])))
 	}
 }

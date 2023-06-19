@@ -104,7 +104,7 @@ func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint
 				return fmt.Errorf("writing message: %w", err)
 			}
 
-			c.log.Info("Data sent", lctx.Interface("probe", p))
+			c.log.Info("Message sent", lctx.Interface("probe", p))
 
 			id++
 			expect = append(expect, expectation{timestamp: time.Now(), probe: p})
@@ -130,7 +130,8 @@ func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint
 					break
 				}
 
-				c.log.Warn("Data dropped",
+				c.log.Warn("Message dropped",
+					lctx.Str("error", "unexpected ID"),
 					lctx.Uint64("expected_id", resp.probe.ID),
 					lctx.Uint64("id", exp.probe.ID),
 					lctx.Str("data", exp.probe.Data),
@@ -141,7 +142,7 @@ func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint
 				continue
 			}
 
-			c.log.Info("Data received",
+			c.log.Info("Message received",
 				lctx.Uint64("id", exp.probe.ID),
 				lctx.Str("data", exp.probe.Data),
 				lctx.Duration("took", resp.timestamp.Sub(exp.timestamp)),
