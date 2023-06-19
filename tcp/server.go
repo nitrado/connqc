@@ -67,6 +67,7 @@ func (s *Server) Listen(addr string) error {
 	}
 }
 
+// Close closes accepted connections.
 func (s *Server) Close() error {
 	return s.listener.Close()
 }
