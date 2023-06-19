@@ -8,6 +8,11 @@ linters-settings:
     skip-tests: true
   gofumpt:
     extra-rules: true
+  depguard:
+    rules:
+      deprecated:
+        deny:
+          - pkg: pkg/errors
 
 linters:
   enable-all: true
@@ -35,7 +40,6 @@ linters:
     - varnamelen
     - wrapcheck
     - wsl
-    - depguard
 
 issues:
   exclude-use-default: false
