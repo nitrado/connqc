@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/hamba/testutils/retry"
 	"github.com/nitrado/connqc/udp"
@@ -48,6 +49,8 @@ func newTestServer(t testing.TB, h udp.Handler) (*udp.Server, net.Conn) {
 
 	addr := ln.LocalAddr()
 	_ = ln.Close()
+
+	<-time.After(10 * time.Millisecond)
 
 	srv, err := udp.NewServer(h)
 	require.NoError(t, err)

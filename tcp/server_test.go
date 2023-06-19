@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/hamba/testutils/retry"
 	"github.com/nitrado/connqc/tcp"
@@ -45,6 +46,8 @@ func newTestServer(t testing.TB, h tcp.Handler) (*tcp.Server, net.Conn) {
 
 	addr := ln.Addr()
 	_ = ln.Close()
+
+	<-time.After(10 * time.Millisecond)
 
 	srv, err := tcp.NewServer(h)
 	require.NoError(t, err)
