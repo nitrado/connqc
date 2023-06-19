@@ -2,11 +2,14 @@ package main
 
 import (
 	"errors"
+	"net"
+	"sync"
 
 	"github.com/hamba/cmd/v2"
 	lctx "github.com/hamba/logger/v2/ctx"
 	"github.com/nitrado/connqc"
 	"github.com/nitrado/connqc/tcp"
+	"github.com/nitrado/connqc/udp"
 	"github.com/urfave/cli/v2"
 )
 
@@ -22,14 +25,23 @@ func runServer(c *cli.Context) error {
 	readTimeout := c.Duration(flagReadTimeout)
 	writeTimeout := c.Duration(flagWriteTimeout)
 
-	sigSrv := connqc.NewServer(bufferSize, readTimeout, writeTimeout, log)
+	srv := connqc.NewServer(bufferSize, readTimeout, writeTimeout, log)
 
-	srv, err := tcp.NewServer(sigSrv)
+	tcpSrv, err := tcp.NewServer(srv)
+	if err != nil {
+		return err
+	}
+
+	udpSrv, err := udp.NewServer(srv)
 	if err != nil {
 		return err
 	}
 
 	addr := c.String(flagAddr)
+
+	grp := sync.WaitGroup{}
+	grp.Add(2)
+
 	log.Info("Starting server",
 		lctx.Str("addr", addr),
 		lctx.Int("buffer_size", bufferSize),
@@ -37,19 +49,29 @@ func runServer(c *cli.Context) error {
 		lctx.Duration("write_timeout", writeTimeout),
 	)
 	go func() {
-		if err := srv.Listen(addr); err != nil && !errors.Is(err, tcp.ErrServerClosed) {
-			log.Error("Server error", lctx.Error("error", err))
+		defer grp.Done()
+
+		if err := tcpSrv.Listen(ctx, addr); err != nil && !errors.Is(err, net.ErrClosed) {
+			log.Error("Server error", lctx.Str("protocol", "tcp"), lctx.Err(err))
+			return
 		}
+		log.Info("TCP server stopped")
 	}()
-	defer func() { _ = srv.Close() }()
+	go func() {
+		defer grp.Done()
+
+		if err := udpSrv.Listen(ctx, addr); err != nil && !errors.Is(err, net.ErrClosed) {
+			log.Error("Server error", lctx.Str("protocol", "udp"), lctx.Err(err))
+			return
+		}
+		log.Info("UDP server stopped")
+	}()
 
 	<-ctx.Done()
 
 	log.Info("Shutting down")
 
-	if err = srv.Close(); err != nil {
-		log.Warn("Failed to shutdown server", lctx.Error("error", err))
-	}
+	grp.Wait()
 
 	return nil
 }

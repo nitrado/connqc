@@ -16,7 +16,9 @@ import (
 )
 
 const (
-	flagAddr = "addr"
+	flagProtocolTCP = "tcp"
+	flagProtocolUDP = "udp"
+	flagAddr        = "addr"
 
 	flagBufferSize   = "buffer-size"
 	flagReadTimeout  = "read-timeout"
@@ -33,21 +35,31 @@ var commands = []*cli.Command{
 		Name:  "client",
 		Usage: "Run the connqc client",
 		Flags: cmd.Flags{
+			&cli.BoolFlag{
+				Name:    flagProtocolTCP,
+				Usage:   "Use TCP protocol for the connection",
+				EnvVars: []string{strcase.ToSNAKE(flagProtocolTCP)},
+			},
+			&cli.BoolFlag{
+				Name:    flagProtocolUDP,
+				Usage:   "Use UDP protocol for the connection",
+				EnvVars: []string{strcase.ToSNAKE(flagProtocolUDP)},
+			},
 			&cli.StringFlag{
 				Name:     flagAddr,
-				Usage:    "The address of a connqc server",
+				Usage:    "The address of the connqc server",
 				Required: true,
 				EnvVars:  []string{strcase.ToSNAKE(flagAddr)},
 			},
 			&cli.DurationFlag{
 				Name:    flagConnBackoff,
-				Usage:   "Duration to wait for before retrying to connect to the server",
+				Usage:   "The duration to wait for before retrying to connect to the server",
 				Value:   time.Second,
 				EnvVars: []string{strcase.ToSNAKE(flagConnBackoff)},
 			},
 			&cli.DurationFlag{
 				Name:    flagSendInterval,
-				Usage:   "Interval at which to send probe messages to the server",
+				Usage:   "The interval at which to send probe messages to the server",
 				Value:   time.Second,
 				EnvVars: []string{strcase.ToSNAKE(flagSendInterval)},
 			},
