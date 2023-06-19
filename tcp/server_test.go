@@ -1,12 +1,14 @@
 package tcp_test
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"sync"
 	"testing"
 
+	"github.com/hamba/testutils/retry"
 	"github.com/nitrado/connqc/tcp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -55,14 +57,22 @@ func newTestServer(t testing.TB, h tcp.Handler) (net.Addr, *tcp.Server) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		wg.Done()
 		err = srv.Listen(addr.String())
-		if err != nil && err != tcp.ErrServerClosed {
+		if err != nil && !errors.Is(err, tcp.ErrServerClosed) {
 			t.Fatal(err)
 		}
 	}()
 
-	wg.Wait()
+	retry.Run(t, func(t *retry.SubT) {
+		conn, err := net.Dial(addr.Network(), addr.String())
+		require.NoError(t, err)
+
+		if conn != nil {
+			require.NoError(t, conn.Close())
+		}
+	})
+
+	wg.Done()
 
 	return addr, srv
 }
