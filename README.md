@@ -95,8 +95,7 @@ The `client` command supports the following additional arguments.
 
 ```shell
 OPTIONS:
-   --tcp                                Use TCP protocol for the connection (default: false) [$TCP]
-   --udp                                Use UDP protocol for the connection (default: false) [$UDP]
+   --protocol value                     Use protocol for the connection (available: tcp, udp) (default: "tcp") [$PROTOCOL]
    --addr value                         The address of the connqc server [$ADDR]
    --backoff value                      The duration to wait for before retrying to connect to the server (default: 1s) [$BACKOFF]
    --interval value                     The interval at which to send probe messages to the server (default: 1s) [$INTERVAL]

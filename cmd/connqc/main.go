@@ -16,6 +16,7 @@ import (
 )
 
 const (
+	flagProtocol    = "protocol"
 	flagProtocolTCP = "tcp"
 	flagProtocolUDP = "udp"
 	flagAddr        = "addr"
@@ -35,15 +36,13 @@ var commands = []*cli.Command{
 		Name:  "client",
 		Usage: "Run the connqc client",
 		Flags: cmd.Flags{
-			&cli.BoolFlag{
-				Name:    flagProtocolTCP,
-				Usage:   "Use TCP protocol for the connection",
-				EnvVars: []string{strcase.ToSNAKE(flagProtocolTCP)},
-			},
-			&cli.BoolFlag{
-				Name:    flagProtocolUDP,
-				Usage:   "Use UDP protocol for the connection",
-				EnvVars: []string{strcase.ToSNAKE(flagProtocolUDP)},
+			&cli.StringFlag{
+				Name: flagProtocol,
+				Usage: fmt.Sprintf(
+					"The protocol for the connection. Supported protocols: '%s', '%s'", flagProtocolTCP, flagProtocolUDP,
+				),
+				Value:   flagProtocolTCP,
+				EnvVars: []string{strcase.ToSNAKE(flagProtocol)},
 			},
 			&cli.StringFlag{
 				Name:     flagAddr,

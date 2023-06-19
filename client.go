@@ -50,6 +50,9 @@ func (c *Client) Run(ctx context.Context, protocol, addr string) {
 			conn, err = tcp.NewConn(addr)
 		case "udp":
 			conn, err = udp.NewConn(addr)
+		default:
+			log.Error("Unexpected protocol")
+			return
 		}
 		if err != nil {
 			log.Error("Could not connect to server", lctx.Err(err))
