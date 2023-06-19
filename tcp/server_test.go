@@ -1,11 +1,10 @@
 package tcp_test
 
 import (
-	"errors"
+	"context"
 	"fmt"
 	"io"
 	"net"
-	"sync"
 	"testing"
 
 	"github.com/hamba/testutils/retry"
@@ -21,17 +20,13 @@ func TestNewServer_ErrorsOnNilHandler(t *testing.T) {
 }
 
 func TestServer_Listen(t *testing.T) {
-	addr, srv := newTestServer(t, echoHandler{})
-	t.Cleanup(func() { _ = srv.Close() })
-
-	conn, err := net.Dial("tcp", addr.String())
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = conn.Close() })
+	_, conn := newTestServer(t, &echoHandler{})
+	defer func() { _ = conn.Close() }()
 
 	for i := 0; i < 3; i++ {
 		msg := fmt.Sprintf("Hello %d", i)
 
-		_, err = io.WriteString(conn, msg)
+		_, err := io.WriteString(conn, msg)
 		require.NoError(t, err, "write error")
 
 		got := make([]byte, 1024)
@@ -42,7 +37,7 @@ func TestServer_Listen(t *testing.T) {
 	}
 }
 
-func newTestServer(t testing.TB, h tcp.Handler) (net.Addr, *tcp.Server) {
+func newTestServer(t testing.TB, h tcp.Handler) (*tcp.Server, net.Conn) {
 	t.Helper()
 
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
@@ -54,40 +49,33 @@ func newTestServer(t testing.TB, h tcp.Handler) (net.Addr, *tcp.Server) {
 	srv, err := tcp.NewServer(h)
 	require.NoError(t, err)
 
-	var wg sync.WaitGroup
-	wg.Add(1)
 	go func() {
-		err = srv.Listen(addr.String())
-		if err != nil && !errors.Is(err, tcp.ErrServerClosed) {
+		err = srv.Listen(context.Background(), addr.String())
+		if err != nil && err != net.ErrClosed {
 			t.Fatal(err)
 		}
 	}()
 
+	var conn net.Conn
 	retry.Run(t, func(t *retry.SubT) {
-		conn, err := net.Dial(addr.Network(), addr.String())
+		conn, err = net.Dial("tcp", addr.String())
 		require.NoError(t, err)
-
-		if conn != nil {
-			require.NoError(t, conn.Close())
-		}
 	})
 
-	wg.Done()
-
-	return addr, srv
+	return srv, conn
 }
 
 type echoHandler struct{}
 
-func (e echoHandler) ServeTCP(conn net.Conn) {
+func (e echoHandler) Serve(conn net.PacketConn) {
 	buf := make([]byte, 512)
 	for {
-		n, err := conn.Read(buf)
+		n, addr, err := conn.ReadFrom(buf)
 		if err != nil {
 			return
 		}
 
-		if _, err = conn.Write(buf[:n]); err != nil {
+		if _, err = conn.WriteTo(buf[:n], addr); err != nil {
 			return
 		}
 	}
