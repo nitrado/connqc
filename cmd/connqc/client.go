@@ -1,17 +1,27 @@
 package main
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/hamba/cmd/v2"
+	lctx "github.com/hamba/logger/v2/ctx"
 	"github.com/nitrado/connqc"
 	"github.com/urfave/cli/v2"
 )
 
 func runClient(c *cli.Context) error {
-	ctx := c.Context
+	ctx, cancel := context.WithCancel(c.Context)
+	defer cancel()
 
 	log, err := cmd.NewLogger(c)
 	if err != nil {
 		return err
+	}
+
+	protocol := c.String(flagProtocol)
+	if protocol != flagProtocolTCP && protocol != flagProtocolUDP {
+		return fmt.Errorf("unsupported protocol: %s", protocol)
 	}
 
 	backoff := c.Duration(flagConnBackoff)
@@ -19,10 +29,13 @@ func runClient(c *cli.Context) error {
 	readTimeout := c.Duration(flagReadTimeout)
 	writeTimeout := c.Duration(flagWriteTimeout)
 
-	sig := connqc.NewClient(backoff, sendInterval, readTimeout, writeTimeout, log)
+	log = log.With(lctx.Str("protocol", protocol))
 
-	addr := c.String(flagAddr)
-	go sig.Run(ctx, addr)
+	client := connqc.NewClient(backoff, sendInterval, readTimeout, writeTimeout, log)
+	go func() {
+		client.Run(ctx, protocol, c.String(flagAddr))
+		cancel()
+	}()
 
 	<-ctx.Done()
 

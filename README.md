@@ -49,14 +49,14 @@ The `server` command supports the following additional arguments.
 
 ```shell
 OPTIONS:
-   --addr value           The address to listen on for probe messages (default: ":8123") [$ADDR]
-   --buffer-size value    The size of the read buffer used by the server (default: 512) [$BUFFER_SIZE]
-   --read-timeout value   The duration after which the server should timeout when reading from a connection (default: 2s) [$READ_TIMEOUT]
-   --write-timeout value  The duration after which the server should timeout when writing to a connection (default: 5s) [$WRITE_TIMEOUT]
-   --log.format value     Specify the format of logs. Supported formats: 'logfmt', 'json', 'console' [$LOG_FORMAT]
-   --log.level value      Specify the log level. e.g. 'debug', 'info', 'error'. (default: "info") [$LOG_LEVEL]
-   --log.ctx value        A list of context field appended to every log. Format: key=value. [$LOG_CTX]
-   --help, -h             show help (default: false)
+   --addr value                         The address to listen on for probe messages (default: ":8123") [$ADDR]
+   --buffer-size value                  The size of the read buffer used by the server (default: 512) [$BUFFER_SIZE]
+   --read-timeout value                 The duration after which the server should timeout when reading from a connection (default: 2s) [$READ_TIMEOUT]
+   --write-timeout value                The duration after which the server should timeout when writing to a connection (default: 5s) [$WRITE_TIMEOUT]
+   --log.format value                   Specify the format of logs. Supported formats: 'logfmt', 'json', 'console' [$LOG_FORMAT]
+   --log.level value                    Specify the log level. e.g. 'debug', 'info', 'error'. (default: "info") [$LOG_LEVEL]
+   --log.ctx value [ --log.ctx value ]  A list of context field appended to every log. Format: key=value. [$LOG_CTX]
+   --help, -h                           show help
 ```
 
 #### Firewall
@@ -95,15 +95,17 @@ The `client` command supports the following additional arguments.
 
 ```shell
 OPTIONS:
-   --addr value           The address of a connqc server [$ADDR]
-   --backoff value        Duration to wait for before retrying to connect to the server (default: 1s) [$BACKOFF]
-   --interval value       Interval at which to send probe messages to the server (default: 1s) [$INTERVAL]
-   --read-timeout value   The duration after which the client should timeout when reading from a connection (default: 2s) [$READ_TIMEOUT]
-   --write-timeout value  The duration after which the client should timeout when writing to a connection (default: 5s) [$WRITE_TIMEOUT]
-   --log.format value     Specify the format of logs. Supported formats: 'logfmt', 'json', 'console' [$LOG_FORMAT]
-   --log.level value      Specify the log level. e.g. 'debug', 'info', 'error'. (default: "info") [$LOG_LEVEL]
-   --log.ctx value        A list of context field appended to every log. Format: key=value. [$LOG_CTX]
-   --help, -h             show help (default: false)
+   --protocol value                     Use protocol for the connection (available: tcp, udp) (default: "tcp") [$PROTOCOL]
+   --addr value                         The address of the connqc server [$ADDR]
+   --backoff value                      The duration to wait for before retrying to connect to the server (default: 1s) [$BACKOFF]
+   --interval value                     The interval at which to send probe messages to the server (default: 1s) [$INTERVAL]
+   --read-timeout value                 The duration after which the client should timeout when reading from a connection (default: 2s) [$READ_TIMEOUT]
+   --write-timeout value                The duration after which the client should timeout when writing to a connection (default: 5s) [$WRITE_TIMEOUT]
+   --log.format value                   Specify the format of logs. Supported formats: 'logfmt', 'json', 'console' [$LOG_FORMAT]
+   --log.level value                    Specify the log level. e.g. 'debug', 'info', 'error'. (default: "info") [$LOG_LEVEL]
+   --log.ctx value [ --log.ctx value ]  A list of context field appended to every log. Format: key=value. [$LOG_CTX]
+   --help, -h                           show help
+
 ```
 
 ## License

@@ -1,4 +1,4 @@
-package tcp_test
+package udp_test
 
 import (
 	"context"
@@ -9,20 +9,20 @@ import (
 	"time"
 
 	"github.com/hamba/testutils/retry"
-	"github.com/nitrado/connqc/tcp"
+	"github.com/nitrado/connqc/udp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewServer_ErrorsOnNilHandler(t *testing.T) {
-	_, err := tcp.NewServer(nil)
+	_, err := udp.NewServer(nil)
 
 	assert.Error(t, err)
 }
 
 func TestServer_Listen(t *testing.T) {
 	_, conn := newTestServer(t, &echoHandler{})
-	defer func() { _ = conn.Close() }()
+	t.Cleanup(func() { _ = conn.Close() })
 
 	for i := 0; i < 3; i++ {
 		msg := fmt.Sprintf("Hello %d", i)
@@ -38,18 +38,21 @@ func TestServer_Listen(t *testing.T) {
 	}
 }
 
-func newTestServer(t testing.TB, h tcp.Handler) (*tcp.Server, net.Conn) {
+func newTestServer(t testing.TB, h udp.Handler) (*udp.Server, net.Conn) {
 	t.Helper()
 
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	laddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:0")
 	require.NoError(t, err)
 
-	addr := ln.Addr()
+	ln, err := net.ListenUDP("udp", laddr)
+	require.NoError(t, err)
+
+	addr := ln.LocalAddr()
 	_ = ln.Close()
 
 	<-time.After(10 * time.Millisecond)
 
-	srv, err := tcp.NewServer(h)
+	srv, err := udp.NewServer(h)
 	require.NoError(t, err)
 
 	go func() {
@@ -59,9 +62,12 @@ func newTestServer(t testing.TB, h tcp.Handler) (*tcp.Server, net.Conn) {
 		}
 	}()
 
+	laddr, err = net.ResolveUDPAddr(addr.Network(), addr.String())
+	require.NoError(t, err)
+
 	var conn net.Conn
 	retry.Run(t, func(t *retry.SubT) {
-		conn, err = net.Dial("tcp", addr.String())
+		conn, err = net.DialUDP("udp", nil, laddr)
 		require.NoError(t, err)
 	})
 

@@ -8,6 +8,8 @@ import (
 
 	"github.com/hamba/logger/v2"
 	lctx "github.com/hamba/logger/v2/ctx"
+	"github.com/nitrado/connqc/tcp"
+	"github.com/nitrado/connqc/udp"
 )
 
 // Client attempts to hold a connection with a server, sending probe messages at a configured interval.
@@ -33,11 +35,27 @@ func NewClient(backoff, sendInterval, readTimeout, writeTimeout time.Duration, l
 
 // Run sends probe messages to the server continuously.
 // If the connection fails, it retries at the configured backoff interval.
-func (c *Client) Run(ctx context.Context, addr string) {
+func (c *Client) Run(ctx context.Context, protocol, addr string) {
+	var (
+		conn net.Conn
+		err  error
+		idx  int
+	)
 	for {
-		conn, err := net.Dial("tcp", addr)
+		log := c.log.With(lctx.Str("protocol", protocol), lctx.Str("addr", addr), lctx.Int("reconnect", idx))
+		idx++
+
+		switch protocol {
+		case "tcp":
+			conn, err = tcp.Connect(addr)
+		case "udp":
+			conn, err = udp.Connect(addr)
+		default:
+			log.Error("Unexpected protocol")
+			return
+		}
 		if err != nil {
-			c.log.Error("Could not connect to server", lctx.Str("address", addr))
+			log.Error("Could not connect to server", lctx.Err(err))
 
 			select {
 			case <-ctx.Done():
@@ -48,7 +66,7 @@ func (c *Client) Run(ctx context.Context, addr string) {
 		}
 
 		if err = c.handleConn(ctx, conn); err != nil {
-			c.log.Error("Connection error", lctx.Error("error", err))
+			log.Error("Connection error", lctx.Err(err))
 		}
 
 		select {
@@ -64,7 +82,7 @@ type expectation struct {
 	probe     Probe
 }
 
-func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint:funlen
+func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint:funlen // Simplify readability.
 	defer func() { _ = conn.Close() }()
 
 	readCh := make(chan readResponse)
@@ -86,10 +104,10 @@ func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint
 				Data: fmt.Sprintf("Hello %d", id),
 			}
 			if err := enc.Encode(p); err != nil {
-				return fmt.Errorf("writing Message: %w", err)
+				return fmt.Errorf("writing message: %w", err)
 			}
 
-			c.log.Debug("Sent probe", lctx.Interface("probe", p))
+			c.log.Info("Message sent", lctx.Interface("probe", p))
 
 			id++
 			expect = append(expect, expectation{timestamp: time.Now(), probe: p})
@@ -98,7 +116,7 @@ func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint
 				return nil
 			}
 			if resp.err != nil {
-				return fmt.Errorf("reading Message: %w", resp.err)
+				return fmt.Errorf("reading response: %w", resp.err)
 			}
 
 			var (
@@ -115,7 +133,12 @@ func (c *Client) handleConn(ctx context.Context, conn net.Conn) error { //nolint
 					break
 				}
 
-				c.log.Warn("Message lost", lctx.Uint64("id", exp.probe.ID), lctx.Str("data", exp.probe.Data))
+				c.log.Warn("Message dropped",
+					lctx.Str("error", "unexpected ID"),
+					lctx.Uint64("expected_id", resp.probe.ID),
+					lctx.Uint64("id", exp.probe.ID),
+					lctx.Str("data", exp.probe.Data),
+				)
 			}
 			if !found {
 				c.log.Error("No expectation found")
@@ -152,11 +175,9 @@ func (c *Client) readLoop(conn net.Conn, ch chan readResponse) {
 
 		p, ok := msg.(Probe)
 		if !ok {
-			ch <- readResponse{err: err}
+			ch <- readResponse{err: fmt.Errorf("message not a probe: %T", msg)}
 			continue
 		}
-
-		c.log.Debug("Received probe", lctx.Interface("probe", p))
 
 		ch <- readResponse{timestamp: time.Now(), probe: p}
 	}
