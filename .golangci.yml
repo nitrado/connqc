@@ -8,6 +8,11 @@ linters-settings:
     skip-tests: true
   gofumpt:
     extra-rules: true
+  depguard:
+    rules:
+      deprecated:
+        deny:
+          - pkg: pkg/errors
 
 linters:
   enable-all: true
