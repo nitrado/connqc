@@ -10,33 +10,33 @@ import (
 // ErrNegativeCount is returned when a negative number of bytes is requested.
 var ErrNegativeCount = errors.New("buffr: negative count")
 
-// BufferedReader implements buffering for an io.Reader object.
-// BufferedReader does not read from the underlying reader unless its
+// Reader implements buffering for an io.Reader object.
+// Reader does not read from the underlying reader unless its
 // buffer is empty, reducing the risk of cross-packet reading.
-type BufferedReader struct {
+type Reader struct {
 	rd   io.Reader
 	buf  []byte
 	r, w int
 }
 
-// NewBufferedReader returns a new BufferedReader with a buffer of the length specified by size.
-func NewBufferedReader(rd io.Reader, size int) *BufferedReader {
-	r := &BufferedReader{}
+// NewReader returns a new Reader with a buffer of the length specified by size.
+func NewReader(rd io.Reader, size int) *Reader {
+	r := &Reader{}
 	r.reset(make([]byte, size), rd)
 	return r
 }
 
 // Reset discards any buffered data, resets all state, and switches
 // the buffered reader to read from rd.
-func (r *BufferedReader) Reset(rd io.Reader) {
+func (r *Reader) Reset(rd io.Reader) {
 	if r.buf == nil {
 		return
 	}
 	r.reset(r.buf, rd)
 }
 
-func (r *BufferedReader) reset(buf []byte, rd io.Reader) {
-	*r = BufferedReader{
+func (r *Reader) reset(buf []byte, rd io.Reader) {
+	*r = Reader{
 		buf: buf,
 		rd:  rd,
 	}
@@ -44,7 +44,7 @@ func (r *BufferedReader) reset(buf []byte, rd io.Reader) {
 
 const maxConsecutiveEmptyReads = 3
 
-func (r *BufferedReader) fill() error {
+func (r *Reader) fill() error {
 	// Ignore any data in the buffer.
 	r.r = 0
 	r.w = 0
@@ -63,13 +63,13 @@ func (r *BufferedReader) fill() error {
 }
 
 // Buffered returns the number of bytes that can be read from the current buffer.
-func (r *BufferedReader) Buffered() int {
+func (r *Reader) Buffered() int {
 	return r.w - r.r
 }
 
 // Peek reads data in p without advancing the reader.
 // It returns the number of bytes read into p.
-func (r *BufferedReader) Peek(p []byte) (int, error) {
+func (r *Reader) Peek(p []byte) (int, error) {
 	if r.r == r.w {
 		err := r.fill()
 		if err != nil {
@@ -83,7 +83,7 @@ func (r *BufferedReader) Peek(p []byte) (int, error) {
 
 // Discard skips the next n bytes, returning the number of bytes discarded.
 // If Discard skips fewer than n bytes, it also returns an error.
-func (r *BufferedReader) Discard(n int) (int, error) {
+func (r *Reader) Discard(n int) (int, error) {
 	if n < 0 {
 		return 0, ErrNegativeCount
 	}
@@ -103,7 +103,7 @@ func (r *BufferedReader) Discard(n int) (int, error) {
 
 // Read reads data in p.
 // It returns the number of bytes read into p.
-func (r *BufferedReader) Read(p []byte) (int, error) {
+func (r *Reader) Read(p []byte) (int, error) {
 	if r.r == r.w {
 		err := r.fill()
 		if err != nil {
@@ -117,7 +117,7 @@ func (r *BufferedReader) Read(p []byte) (int, error) {
 }
 
 // ReadByte reads the next byte.
-func (r *BufferedReader) ReadByte() (byte, error) {
+func (r *Reader) ReadByte() (byte, error) {
 	if r.r == r.w {
 		err := r.fill()
 		if err != nil {
@@ -134,7 +134,7 @@ func (r *BufferedReader) ReadByte() (byte, error) {
 // returning a slice pointing at the bytes in the buffer.
 // If ReadSlice encounters the end of the buffer before finding the delimiter,
 // it returns an io.EOF error.
-func (r *BufferedReader) ReadSlice(delim byte) ([]byte, error) {
+func (r *Reader) ReadSlice(delim byte) ([]byte, error) {
 	if r.r == r.w {
 		err := r.fill()
 		if err != nil {

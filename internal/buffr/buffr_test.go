@@ -13,7 +13,7 @@ import (
 func TestPacketReader(t *testing.T) {
 	rd := bytes.NewReader([]byte("this is a test:"))
 
-	r := buffr.NewBufferedReader(rd, 20)
+	r := buffr.NewReader(rd, 20)
 	r.Reset(rd)
 
 	var pb [5]byte
@@ -50,7 +50,7 @@ func TestPacketReader(t *testing.T) {
 func TestPacketReader_DiscardHandlesShortBuffer(t *testing.T) {
 	rd := bytes.NewReader([]byte("test"))
 
-	r := buffr.NewBufferedReader(rd, 20)
+	r := buffr.NewReader(rd, 20)
 
 	var pb [5]byte
 	_, err := r.Peek(pb[:])
@@ -65,7 +65,7 @@ func TestPacketReader_DiscardHandlesShortBuffer(t *testing.T) {
 func TestPacketReader_ReadSliceHandlesShortBuffer(t *testing.T) {
 	rd := bytes.NewReader([]byte("test"))
 
-	r := buffr.NewBufferedReader(rd, 20)
+	r := buffr.NewReader(rd, 20)
 
 	sb, err := r.ReadSlice(':')
 

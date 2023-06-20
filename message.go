@@ -63,9 +63,9 @@ type Decoder struct {
 // NewDecoder returns a decoder for the given reader.
 func NewDecoder(r io.Reader) Decoder {
 	return Decoder{
-		// The packet reader solves the issue of reading packets at once (required for UDP) while
+		// The buffered reader solves the issue of reading packets at once (required for UDP) while
 		// still being able to read byte by byte to verify the input.
-		r: buffr.NewBufferedReader(r, 1500),
+		r: buffr.NewReader(r, 1500),
 	}
 }
 
