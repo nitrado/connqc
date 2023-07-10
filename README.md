@@ -15,19 +15,16 @@
     </a>
 </p>
 
-`connqc` is a tool to check the quality of the network transport between networked hosts.
-We have, in our past encountered the following problems in the wild between two hosts:
-- The network connection between two hosts is not stable.
-- The network connection between two hosts may seem stable, but the firewall in between may be dropping packets.
-- The network connection between two hosts may seem stable, but the firewall in between may be dropping packets after a certain amount of time.
-- The network connection between two hosts may seem stable, but the firewall in between may be dropping packets after a certain amount of time, but only if the connection is established for a while.
-- The network connection between two hosts may seem stable, but certain ports or port combinations are blocked.
-- The network connection seems stable, but the routes taken are flipping and thus creating spontaneous connection issues.
-- Some other weird stuff.
+`connqc` is a tool to assess the reliability of the network transport between networked hosts.
+Known connection issues that `connqc` has been designed to detect include:
+- Unstable connection between hosts
+- Firewall dropping packets intermittently
+- Ports or port combinations are blocked or become blocked
+- Routes flip flop causing spontaneous connection issues
 
-As most of you who may have found themselves in this situation, we have fiddled with ping, netcat, iperf, and other tools, but found that most of these would not establish a connection, keep it up without user interaction and report on the quality of the connection. This is why we developed this tool, to help others in the same situation.
+While other tools exist that are similar to `connqc`, such as **ping**, **netcat** and **iperf**, they do not establish a connection that is maintained without user interaction while also reporting the connection quality.
 
-`connqc` consists of a server that listens for TCP probing messages, and a client that sends said messages.
+`connqc` consists of a server that listens for TCP or UDP probing messages, and a client that sends said messages.
 The client logs the probing duration and warns if some messages get lost.
 
 ## Usage
