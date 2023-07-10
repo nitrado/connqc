@@ -15,8 +15,16 @@
     </a>
 </p>
 
-`connqc` is a tool to control the quality of the network transport between multiple regions.
-It consists of a server that listens for TCP probing messages, and a client that sends said messages.
+`connqc` is a tool to assess the reliability of the network transport between networked hosts.
+Known connection issues that `connqc` has been designed to detect include:
+- Unstable connection between hosts
+- Firewall dropping packets intermittently
+- Ports or port combinations are blocked or become blocked
+- Routes flip flop causing spontaneous connection issues
+
+While other tools exist that are similar to `connqc`, such as **ping**, **netcat** and **iperf**, they do not establish a connection that is maintained without user interaction while also reporting the connection quality.
+
+`connqc` consists of a server that listens for TCP or UDP probing messages, and a client that sends said messages.
 The client logs the probing duration and warns if some messages get lost.
 
 ## Usage
