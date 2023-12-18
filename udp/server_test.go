@@ -1,21 +1,20 @@
-package udp_test
+package udp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"testing"
-	"time"
 
 	"github.com/hamba/testutils/retry"
-	"github.com/nitrado/connqc/udp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewServer_ErrorsOnNilHandler(t *testing.T) {
-	_, err := udp.NewServer(nil)
+	_, err := NewServer(nil)
 
 	assert.Error(t, err)
 }
@@ -38,40 +37,44 @@ func TestServer_Listen(t *testing.T) {
 	}
 }
 
-func newTestServer(t testing.TB, h udp.Handler) (*udp.Server, net.Conn) {
+func newTestServer(t testing.TB, h Handler) (*Server, net.Conn) {
 	t.Helper()
 
-	laddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:0")
-	require.NoError(t, err)
+	lnCh := make(chan *net.UDPConn, 1)
+	setTestHookServerServe(func(ln *net.UDPConn) {
+		lnCh <- ln
+	})
+	t.Cleanup(func() { setTestHookServerServe(nil) })
 
-	ln, err := net.ListenUDP("udp", laddr)
-	require.NoError(t, err)
-
-	addr := ln.LocalAddr()
-	_ = ln.Close()
-
-	<-time.After(10 * time.Millisecond)
-
-	srv, err := udp.NewServer(h)
+	srv, err := NewServer(h)
 	require.NoError(t, err)
 
 	go func() {
-		err = srv.Listen(context.Background(), addr.String())
-		if err != nil && err != net.ErrClosed {
+		ctx, cancel := context.WithCancel(context.Background())
+		t.Cleanup(cancel)
+
+		err = srv.Listen(ctx, "localhost:0")
+		if err != nil && !errors.Is(err, net.ErrClosed) {
 			t.Fatal(err)
 		}
 	}()
 
-	laddr, err = net.ResolveUDPAddr(addr.Network(), addr.String())
+	ln := <-lnCh
+
+	laddr, err := net.ResolveUDPAddr(ln.LocalAddr().Network(), ln.LocalAddr().String())
 	require.NoError(t, err)
 
 	var conn net.Conn
 	retry.Run(t, func(t *retry.SubT) {
 		conn, err = net.DialUDP("udp", nil, laddr)
-		require.NoError(t, err)
+		assert.NoError(t, err)
 	})
 
 	return srv, conn
+}
+
+func setTestHookServerServe(fn func(conn *net.UDPConn)) {
+	testHookServerServe = fn
 }
 
 type echoHandler struct{}
