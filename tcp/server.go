@@ -49,7 +49,7 @@ func (s *Server) Listen(ctx context.Context, addr string) error {
 		<-ctx.Done()
 		_ = ln.Close()
 	}()
-	
+
 	for {
 		conn, err := ln.Accept()
 
