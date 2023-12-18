@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var testHookServerServe func(net.Listener)
+
 // Handler handles TCP connections.
 type Handler interface {
 	Serve(conn net.PacketConn)
@@ -38,6 +40,10 @@ func (s *Server) Listen(ctx context.Context, addr string) error {
 		return fmt.Errorf("listening: %w", err)
 	}
 	defer func() { _ = ln.Close() }()
+
+	if testHookServerServe != nil {
+		testHookServerServe(ln)
+	}
 
 	go func() {
 		<-ctx.Done()

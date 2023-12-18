@@ -1,21 +1,20 @@
-package tcp_test
+package tcp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"testing"
-	"time"
 
 	"github.com/hamba/testutils/retry"
-	"github.com/nitrado/connqc/tcp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewServer_ErrorsOnNilHandler(t *testing.T) {
-	_, err := tcp.NewServer(nil)
+	_, err := NewServer(nil)
 
 	assert.Error(t, err)
 }
@@ -38,34 +37,41 @@ func TestServer_Listen(t *testing.T) {
 	}
 }
 
-func newTestServer(t testing.TB, h tcp.Handler) (*tcp.Server, net.Conn) {
+func newTestServer(t testing.TB, h Handler) (*Server, net.Conn) {
 	t.Helper()
 
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
-	require.NoError(t, err)
+	lnCh := make(chan net.Listener, 1)
+	setTestHookServerServe(func(ln net.Listener) {
+		lnCh <- ln
+	})
+	t.Cleanup(func() { setTestHookServerServe(nil) })
 
-	addr := ln.Addr()
-	_ = ln.Close()
-
-	<-time.After(10 * time.Millisecond)
-
-	srv, err := tcp.NewServer(h)
+	srv, err := NewServer(h)
 	require.NoError(t, err)
 
 	go func() {
-		err = srv.Listen(context.Background(), addr.String())
-		if err != nil && err != net.ErrClosed {
+		ctx, cancel := context.WithCancel(context.Background())
+		t.Cleanup(cancel)
+
+		err = srv.Listen(ctx, "localhost:0")
+		if err != nil && !errors.Is(err, net.ErrClosed) {
 			t.Fatal(err)
 		}
 	}()
 
+	ln := <-lnCh
+
 	var conn net.Conn
 	retry.Run(t, func(t *retry.SubT) {
-		conn, err = net.Dial("tcp", addr.String())
-		require.NoError(t, err)
+		conn, err = net.Dial("tcp", ln.Addr().String())
+		assert.NoError(t, err)
 	})
 
 	return srv, conn
+}
+
+func setTestHookServerServe(fn func(net.Listener)) {
+	testHookServerServe = fn
 }
 
 type echoHandler struct{}
