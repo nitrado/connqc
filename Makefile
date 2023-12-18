@@ -12,11 +12,6 @@ tidy:
 	@echo "==> Done"
 .PHONY: tidy
 
-# Build the commands
-build:
-	@find ./cmd/* -maxdepth 1 -type d -exec go build {} \;
-.PHONY: build
-
 # Run all tests
 test:
 	@go test -cover -race ./...
@@ -26,3 +21,8 @@ test:
 lint:
 	@golangci-lint run ./...
 .PHONY: lint
+
+# Build the commands
+build:
+	@goreleaser release --clean --snapshot
+.PHONY: build
