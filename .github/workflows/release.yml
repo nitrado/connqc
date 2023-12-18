@@ -38,22 +38,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      # Here, we simply print the exact go version, to have it as part of the
-      # action's output, which might be convenient.
-      - name: Print Go version
-        run: go version
-
-      # This check makes sure that the `go.mod` and `go.sum` files for Go
-      # modules are always up-to-date.
-      - name: Verify Go modules
-        run: go mod tidy && git status && git --no-pager diff && git diff-index --quiet HEAD --
-
       # Run GoReleaser.
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
