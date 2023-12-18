@@ -3,7 +3,7 @@ module github.com/nitrado/connqc
 go 1.20
 
 require (
-	github.com/ettle/strcase v0.1.1
+	github.com/ettle/strcase v0.2.0
 	github.com/hamba/cmd/v2 v2.7.2
 	github.com/hamba/logger/v2 v2.5.0
 	github.com/hamba/testutils v0.3.0
