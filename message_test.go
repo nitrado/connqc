@@ -25,7 +25,6 @@ func TestEncoder_Encode(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			buf := bytes.Buffer{}
 			enc := connqc.NewEncoder(&buf)
@@ -54,7 +53,6 @@ func TestDecoder_Decode(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			dec := connqc.NewDecoder(bytes.NewReader(test.data))
 

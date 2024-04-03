@@ -12,8 +12,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      GO_VERSION: "1.21"
-      GOLANGCI_LINT_VERSION: v1.54.2
+      GO_VERSION: "1.22"
+      GOLANGCI_LINT_VERSION: v1.57.1
 
     steps:
       - name: Check out source code
@@ -48,7 +48,6 @@ jobs:
         uses: golangci/golangci-lint-action@v4
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
-          args: --go ${{ env.GO_VERSION }}
 
       # This check runs all unit tests.
       - name: Verify unit tests
