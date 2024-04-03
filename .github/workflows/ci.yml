@@ -21,12 +21,12 @@ jobs:
 
       - name: Install Go
         if: success()
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Cache Go modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -45,7 +45,7 @@ jobs:
 
       # This check runs the linter, which enforces code formatting and quality.
       - name: Run linter
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
           args: --go ${{ env.GO_VERSION }}
