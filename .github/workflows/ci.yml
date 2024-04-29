@@ -45,7 +45,7 @@ jobs:
 
       # This check runs the linter, which enforces code formatting and quality.
       - name: Run linter
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v5
         with:
           version: ${{ env.GOLANGCI_LINT_VERSION }}
 
