@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+	"math"
 
 	"github.com/nitrado/connqc/internal/buffr"
 )
@@ -39,8 +40,13 @@ func (e Encoder) Encode(msg Message) error {
 		var idBytes [8]byte
 		binary.BigEndian.PutUint64(idBytes[:], v.ID)
 
+		dataLen := len(v.Data)
+		if dataLen > math.MaxUint16 {
+			return errors.New("probe data is too long")
+		}
+
 		var lenBytes [2]byte
-		binary.BigEndian.PutUint16(lenBytes[:], uint16(len(v.Data)))
+		binary.BigEndian.PutUint16(lenBytes[:], uint16(dataLen)) //nolint:gosec
 
 		var buf bytes.Buffer
 		buf.WriteString("PRB")
