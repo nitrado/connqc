@@ -1,3 +1,4 @@
+version: 2
 project_name: connqc
 dist: dist
 
@@ -39,4 +40,4 @@ dockers:
       - "ghcr.io/nitrado/connqc:latest"
 
 snapshot:
-  name_template: "dev-{{ slice .FullCommit 0 8}}"
+  version_template: "dev-{{ slice .FullCommit 0 8}}"
