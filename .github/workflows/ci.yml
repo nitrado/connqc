@@ -12,7 +12,6 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      GO_VERSION: "1.23"
       GOLANGCI_LINT_VERSION: v1.60.3
 
     steps:
@@ -20,38 +19,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Go
-        if: success()
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'go.mod'
 
-      - name: Cache Go modules
-        uses: actions/cache@v4
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+      - name: Download dependencies
+        run: go mod download
 
-      # Here, we simply print the exact go version, to have it as part of the
-      # action's output, which might be convenient.
-      - name: Print Go version
-        run: go version
-
-      # This check makes sure that the `go.mod` and `go.sum` files for Go
-      # modules are always up-to-date.
-      - name: Verify Go modules
-        run: go mod tidy && git status && git --no-pager diff && git diff-index --quiet HEAD --
-
-      # This check runs the linter, which enforces code formatting and quality.
-      - name: Run linter
+      - name: Run Linter
         uses: golangci/golangci-lint-action@v6
         with:
-          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          version: ${{ inputs.GOLANGCI_LINT_VERSION }}
 
-      # This check runs all unit tests.
-      - name: Verify unit tests
-        run: make test
+      - name: Setup gotestsum
+        uses: gertd/action-gotestsum@v3.0.0
+        with:
+          gotestsum_version: v1.12.0
+
+      - name: Run Tests
+        run: gotestsum --junitfile tests.xml --format pkgname -- -cover -race ./...
+
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "tests.xml"
+        if: always()
 
       # Run GoReleaser.
       - name: Run GoReleaser
