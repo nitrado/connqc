@@ -46,7 +46,7 @@ func (e Encoder) Encode(msg Message) error {
 		}
 
 		var lenBytes [2]byte
-		binary.BigEndian.PutUint16(lenBytes[:], uint16(dataLen)) //nolint:gosec
+		binary.BigEndian.PutUint16(lenBytes[:], uint16(dataLen))
 
 		var buf bytes.Buffer
 		buf.WriteString("PRB")
