@@ -1,12 +1,11 @@
 module github.com/nitrado/connqc
 
 go 1.24.1
-
 require (
 	github.com/ettle/strcase v0.2.0
 	github.com/hamba/cmd/v2 v2.15.0
 	github.com/hamba/logger/v2 v2.8.0
-	github.com/hamba/testutils v0.5.0
+	github.com/hamba/testutils v0.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v2 v2.27.6
