@@ -41,8 +41,8 @@ github.com/hamba/logger/v2 v2.8.0 h1:0JJnEhVW4sHGn4/9fPP0LsZXD2ytG+NrnrXCdM8/vmg
 github.com/hamba/logger/v2 v2.8.0/go.mod h1:V58KZPAmDEWi14dOZjbKDPFkdyvpGwxXtLzLkVTNBic=
 github.com/hamba/statter/v2 v2.6.0 h1:d64DL4p48xAW4M876jrtguuEFXFf6cDFJR0WxNCDKVI=
 github.com/hamba/statter/v2 v2.6.0/go.mod h1:5QpB06ilNfJNfXW5YYe4cHUlh1NGTjIlpKDv/nl7U8w=
-github.com/hamba/testutils v0.5.0 h1:/BJfj/EV3QYzxiX0GFjhnR+rHkAcPWnv/8nzqplnIcU=
-github.com/hamba/testutils v0.5.0/go.mod h1:+rvWip37m00FCc+s4iTF9Ns+6lu7zKMshLiMX8SntKs=
+github.com/hamba/testutils v0.6.0 h1:sxP4j/PGQpgFpPvE/mQOdMV1oebRx4Q85p/UBFKye+c=
+github.com/hamba/testutils v0.6.0/go.mod h1:+rvWip37m00FCc+s4iTF9Ns+6lu7zKMshLiMX8SntKs=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
